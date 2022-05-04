@@ -43,9 +43,11 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil { // If we got a message
+		if update.Message.IsCommand() {
+			continue
+		}
+		if update.Message != nil {
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-			reply(update, bot, "working on it")
 
 			servers := findServers(update.Message.Text)
 			if len(servers) == 0 {
