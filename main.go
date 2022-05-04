@@ -20,7 +20,7 @@ var (
 	TelegramToken   string
 )
 
-func init() {
+func main() {
 	ServiceURL = os.Getenv("SERVICE_URL")
 	ServiceUserName = os.Getenv("SERVICE_USERNAME")
 	ServicePassword = os.Getenv("SERVICE_PASSWORD")
@@ -29,9 +29,7 @@ func init() {
 	if ServiceURL == "" || ServiceUserName == "" || ServicePassword == "" || TelegramToken == "" {
 		log.Fatal("missing data from environment")
 	}
-}
 
-func main() {
 	bot, err := tgbotapi.NewBotAPI(TelegramToken)
 	if err != nil {
 		log.Fatal(err)
@@ -80,7 +78,7 @@ func reply(update tgbotapi.Update, bot *tgbotapi.BotAPI, reply string) {
 
 func findServers(input string) []string {
 	servers := []string{}
-	r, err := regexp.Compile("ss://[A-Za-z\\d+/]*@.*:\\d+")
+	r, err := regexp.Compile("ss://[A-Za-z\\d+/]+@.+:\\d+|ss://[A-Za-z\\d+/]+")
 	if err != nil {
 		log.Printf("error building RE %v", err)
 		return nil
