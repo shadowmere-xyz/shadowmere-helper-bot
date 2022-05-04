@@ -54,16 +54,16 @@ func main() {
 				servers = findServers(update.Message.Caption)
 			}
 			if len(servers) > 0 {
-				reply_text := ""
+				replyText := ""
 				for _, server := range servers {
 					err := addServer(server)
 					if err != nil {
-						reply_text += fmt.Sprintf("Error adding server [%s] with error: %v\n", server, err)
+						replyText += fmt.Sprintf("Error adding server [%s] with error: %v\n", server, err)
 					} else {
-						reply_text += fmt.Sprintf("Added server %s\n", server)
+						replyText += fmt.Sprintf("Added server %s\n", server)
 					}
 				}
-				reply(update, bot, reply_text)
+				reply(update, bot, replyText)
 			} else {
 				reply(update, bot, fmt.Sprintf("I could not find any servers in this message"))
 			}
@@ -75,7 +75,10 @@ func reply(update tgbotapi.Update, bot *tgbotapi.BotAPI, reply string) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, reply)
 	msg.ReplyToMessageID = update.Message.MessageID
 
-	bot.Send(msg)
+	_, err := bot.Send(msg)
+	if err != nil {
+		log.Printf("error sending reply %v", err)
+	}
 }
 
 func findServers(input string) []string {
