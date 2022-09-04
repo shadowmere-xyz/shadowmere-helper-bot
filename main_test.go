@@ -24,6 +24,8 @@ ss://YWVzLTI1Ni1nY206ZmFCQW9ENTRrODdVSkc3@54.36.174.181:2376#Britain504%20%28t.m
 🇬🇧 #Britain
 
 ss://YWVzLTI1Ni1nY206UENubkg2U1FTbmZvUzI3QDUuMzkuNzAuMTM4OjgwOTA=#FrOutlineKeys
+
+ss://YWVzLTI1Ni1nY206S2l4THZLendqZWtHMDBybQ==@ak1394.free.www.outline.network:8080#www.outline.network%20(japan)
 `
 	expectedServers := []string{
 		"ss://YWVzLTI1Ni1nY206WTZSOXBBdHZ4eHptR0M@54.36.174.181:5001",
@@ -31,9 +33,10 @@ ss://YWVzLTI1Ni1nY206UENubkg2U1FTbmZvUzI3QDUuMzkuNzAuMTM4OjgwOTA=#FrOutlineKeys
 		"ss://YWVzLTI1Ni1nY206WTZSOXBBdHZ4eHptR0M@54.36.174.181:3306",
 		"ss://YWVzLTI1Ni1nY206ZmFCQW9ENTRrODdVSkc3@54.36.174.181:2376",
 		"ss://YWVzLTI1Ni1nY206UENubkg2U1FTbmZvUzI3QDUuMzkuNzAuMTM4OjgwOTA",
+		"ss://YWVzLTI1Ni1nY206S2l4THZLendqZWtHMDBybQ==@ak1394.free.www.outline.network:8080",
 	}
 
 	servers := findServers(sample)
-	assert.Len(t, servers, 5)
+	assert.Len(t, servers, 6)
 	assert.EqualValues(t, expectedServers, servers)
 }
