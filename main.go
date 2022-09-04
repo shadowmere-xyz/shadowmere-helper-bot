@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -19,6 +19,10 @@ var (
 	ServicePassword string
 	TelegramToken   string
 )
+
+type ErrorMessage struct {
+	URL []string `json:"url"`
+}
 
 func main() {
 	ServiceURL = os.Getenv("SERVICE_URL")
@@ -54,16 +58,20 @@ func main() {
 				servers = findServers(update.Message.Caption)
 			}
 			if len(servers) > 0 {
-				replyText := ""
-				for _, server := range servers {
+				reply(update, bot, fmt.Sprintf("I found %d servers in this message.", len(servers)))
+				replyText := make([]string, len(servers))
+				for i, server := range servers {
 					err := addServer(server)
 					if err != nil {
-						replyText += fmt.Sprintf("Error adding server [%s] with error: %v\n", server, err)
+						replyText[i] = fmt.Sprintf("Error: %v\n", err)
 					} else {
-						replyText += fmt.Sprintf("Added server %s\n", server)
+						replyText[i] = fmt.Sprintf("Added server %s\n", server)
 					}
+					log.Info(replyText[i])
 				}
-				reply(update, bot, replyText)
+				for _, replyStr := range replyText {
+					reply(update, bot, replyStr)
+				}
 			} else {
 				reply(update, bot, fmt.Sprintf("I could not find any servers in this message"))
 			}
@@ -96,6 +104,7 @@ func findServers(input string) []string {
 }
 
 func addServer(server string) error {
+	log.Infof("Adding server %s", server)
 	client := &http.Client{}
 	var data = strings.NewReader(fmt.Sprintf("url=%s", server))
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/proxies/", ServiceURL), data)
@@ -113,11 +122,14 @@ func addServer(server string) error {
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode == http.StatusBadRequest && bytes.Contains(body, []byte("This proxy was already imported")) {
-		return fmt.Errorf("proxy already imported")
-	}
 	if resp.StatusCode != http.StatusCreated {
-		return fmt.Errorf("request failed with code %d", resp.StatusCode)
+		errors := ErrorMessage{}
+		err := json.Unmarshal(body, &errors)
+		if err != nil {
+			return fmt.Errorf("request failed with code %d.\nError message is not in the expected format", resp.StatusCode)
+		}
+
+		return fmt.Errorf("could not add key %s because %s", server, errors.URL)
 	}
 
 	return nil
