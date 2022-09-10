@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -73,7 +74,9 @@ func main() {
 					reply(update, bot, replyStr)
 				}
 			} else {
-				reply(update, bot, fmt.Sprintf("I could not find any servers in this message"))
+				if update.Message.Chat.Type == "private" {
+					reply(update, bot, fmt.Sprintf("I could not find any servers in this message"))
+				}
 			}
 		}
 	}
