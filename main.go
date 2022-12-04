@@ -115,6 +115,7 @@ func addServer(server string) error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("User-Agent", "shadowmere-helper-bot")
 	req.SetBasicAuth(ServiceUserName, ServicePassword)
 	resp, err := client.Do(req)
 	if err != nil {
