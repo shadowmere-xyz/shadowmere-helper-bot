@@ -94,7 +94,7 @@ func reply(update tgbotapi.Update, bot *tgbotapi.BotAPI, reply string) {
 
 func findServers(input string) []string {
 	servers := []string{}
-	r, err := regexp.Compile("\n+\\s*(ss://[A-Za-z0-9]+=*@.+:\\d+|ss://[A-Za-z0-9]+)")
+	r, err := regexp.Compile("(\n+\\s*|\\s+)(ss://[A-Za-z0-9]+=*@.+:\\d+|ss://[A-Za-z0-9]+)")
 	if err != nil {
 		log.Printf("error building RE %v", err)
 		return nil
