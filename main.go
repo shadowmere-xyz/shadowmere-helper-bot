@@ -52,7 +52,7 @@ func main() {
 			continue
 		}
 		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+			log.WithFields(log.Fields{"user": update.Message.From.UserName, "chat id": update.Message.Chat.ID, "text": update.Message.Text}).Info("Received message")
 
 			servers := findServers(update.Message.Text)
 			if len(servers) == 0 {
