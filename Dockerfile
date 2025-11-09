@@ -1,10 +1,15 @@
-FROM golang:1.21 AS build
+FROM golang:1.25 AS build
+
+WORKDIR /app
+
+COPY go.mod go.sum /app/
+RUN go mod download
 
 COPY . /app
-WORKDIR /app
 RUN CGO_ENABLED=0 GOOS=linux go build
 
-FROM alpine:3.18
-COPY --from=build /app/shadowmere-helper-bot /user/bin/
+FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /app/shadowmere-helper-bot /usr/bin/
 
-ENTRYPOINT /user/bin/shadowmere-helper-bot
+ENTRYPOINT [ "/usr/bin/shadowmere-helper-bot" ]
