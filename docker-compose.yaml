@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   helper_bot:
     image: guamulo/shadowmere-helper-bot
