@@ -3,7 +3,7 @@ services:
     image: guamulo/shadowmere-helper-bot
     restart: always
     ports:
-      - "54541:54541"
+      - "45451:45451"
     build:
       context: .
     env_file:
