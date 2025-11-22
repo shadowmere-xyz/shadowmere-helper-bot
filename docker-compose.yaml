@@ -2,6 +2,8 @@ services:
   helper_bot:
     image: guamulo/shadowmere-helper-bot
     restart: always
+    ports:
+      - "54541:54541"
     build:
       context: .
     env_file:
