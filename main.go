@@ -35,10 +35,12 @@ func main() {
 		log.Fatal("missing data from environment")
 	}
 
-	err := startMetricsServer(45451)
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		err := startMetricsServer(45451)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	bot, err := tgbotapi.NewBotAPI(TelegramToken)
 	if err != nil {
