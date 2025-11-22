@@ -35,6 +35,11 @@ func main() {
 		log.Fatal("missing data from environment")
 	}
 
+	err := startMetricsServer(45451)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	bot, err := tgbotapi.NewBotAPI(TelegramToken)
 	if err != nil {
 		log.Fatal(err)
@@ -64,8 +69,10 @@ func main() {
 				for i, server := range servers {
 					err := addServer(server)
 					if err != nil {
+						additionErrorsTotal.Inc()
 						replyText[i] = fmt.Sprintf("Error: %v\n", err)
 					} else {
+						additionsTotal.Inc()
 						replyText[i] = fmt.Sprintf("Added server %s\n", server)
 					}
 					log.Info(replyText[i])
@@ -88,6 +95,7 @@ func reply(update tgbotapi.Update, bot *tgbotapi.BotAPI, reply string) {
 
 	_, err := bot.Send(msg)
 	if err != nil {
+		errorsTotal.Inc()
 		log.Printf("error sending reply %v", err)
 	}
 }
@@ -96,6 +104,7 @@ func findServers(input string) []string {
 	servers := []string{}
 	r, err := regexp.Compile("(\n+\\s*|\\s+)(ss://[A-Za-z0-9]+=*@.+:\\d+|ss://[A-Za-z0-9]+)")
 	if err != nil {
+		errorsTotal.Inc()
 		log.Printf("error building RE %v", err)
 		return nil
 	}
